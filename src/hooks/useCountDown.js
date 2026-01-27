@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import { MS_PER_SECOND, SECONDS_PER_MINUTE } from '../constants/time'
 
@@ -11,8 +11,15 @@ import { MS_PER_SECOND, SECONDS_PER_MINUTE } from '../constants/time'
  */
 export const useCountDown = ({ initialSeconds, onFinish }) => {
   const [timeLeft, setTimeLeft] = useState(initialSeconds)
+  const onFinishRef = useRef(onFinish)
 
   useEffect(() => {
+    onFinishRef.current = onFinish
+  }, [onFinish])
+
+  useEffect(() => {
+    setTimeLeft(initialSeconds)
+
     const intervalId = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -20,7 +27,7 @@ export const useCountDown = ({ initialSeconds, onFinish }) => {
             clearInterval(intervalId)
           }
 
-          onFinish?.()
+          onFinishRef.current?.()
 
           return 0
         }
@@ -34,7 +41,7 @@ export const useCountDown = ({ initialSeconds, onFinish }) => {
         clearInterval(intervalId)
       }
     }
-  }, [])
+  }, [initialSeconds])
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / SECONDS_PER_MINUTE)
