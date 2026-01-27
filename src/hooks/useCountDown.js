@@ -13,6 +13,10 @@ export const useCountDown = ({ initialSeconds, onFinish }) => {
   const [timeLeft, setTimeLeft] = useState(initialSeconds)
 
   useEffect(() => {
+    setTimeLeft(initialSeconds)
+  }, [initialSeconds])
+
+  useEffect(() => {
     const intervalId = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
